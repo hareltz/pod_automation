@@ -1,9 +1,12 @@
-﻿using System;
+﻿using auto_designs;
+using System;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        // Print to verify removal
+        FilesManager.deserializeKeywordsData();
+        FilesManager.printkeywordsData();
     }
 }
