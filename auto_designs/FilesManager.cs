@@ -13,6 +13,7 @@ namespace auto_designs
     internal static class FilesManager
     {
         private static readonly string keywordsPath = "keywords.json";
+        private static readonly string dbPath = "tags.db";
         private static Dictionary<string, List<string>> keywordsData = new Dictionary<string, List<string>>();
 
         /// <summary>
@@ -24,6 +25,18 @@ namespace auto_designs
             {
                 // Create a new file with an empty JSON object
                 File.WriteAllText(keywordsPath, "{}");
+            }
+        }
+
+        /// <summary>
+        /// this function creates the SQLite database file if it does not already exist
+        /// </summary>
+        public static void createDBFile()
+        {
+            if (!File.Exists(dbPath))
+            {
+                // Create a new empty database file
+                File.Create(dbPath).Close();
             }
         }
 
@@ -99,6 +112,15 @@ namespace auto_designs
             {
                 Console.WriteLine($"Niche '{niche}' does not exist.");
             }
+        }
+
+        /// <summary>
+        /// this function returns the keywordsData dictionary
+        /// </summary>
+        /// <returns>the keywordsData dictionary</returns>
+        public static Dictionary<string, List<string>> GetKeywordsData()
+        {
+            return keywordsData;
         }
     }
 }
