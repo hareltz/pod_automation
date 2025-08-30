@@ -106,7 +106,7 @@ namespace auto_designs
             // Insert each tag into the Tags table
             foreach (var tag in tags)
             {
-                addItem(tag, nicheName);
+                addTag(tag, nicheName);
             }
         }
 
@@ -130,6 +130,24 @@ namespace auto_designs
         }
 
         /// <summary>
+        /// this function adds a tag to the DB
+        /// </summary>
+        /// <param name="tagName">the tag name</param>
+        /// <param name="nicheName">the niche name</param>
+        public static void addTag(string tagName, string nicheName)
+        {
+            mtx.WaitOne();
+            // Insert the tag into the Tags table
+            string insertTagQuery = "INSERT INTO Tags (TAG, NICHE_ID) VALUES (@tag, @nicheId);";
+            SqliteCommand insertTagCmd = SQL.CreateCommand();
+            insertTagCmd.CommandText = insertTagQuery;
+            insertTagCmd.Parameters.AddWithValue("@tag", tagName);
+            insertTagCmd.Parameters.AddWithValue("@nicheId", getNicheId(nicheName));
+            insertTagCmd.ExecuteNonQuery();
+            mtx.ReleaseMutex();
+        }
+
+        /// <summary>
         /// this function prints all the niches and their associated tags from the DB
         /// </summary>
         public static void printNichesAndTags()
@@ -147,7 +165,7 @@ namespace auto_designs
                 string selectTagsQuery = "SELECT TAG FROM Tags WHERE NICHE_ID = @nicheId;";
                 SqliteCommand selectTagsCmd = SQL.CreateCommand();
                 selectTagsCmd.CommandText = selectTagsQuery;
-                selectTagsCmd.Parameters.AddWithValue("@nicheId", nicheId);
+                selectTagsCmd.Parameters.AddWithValue("@nicheId", nicheId.ToString());
                 SqliteDataReader tagsReader = selectTagsCmd.ExecuteReader();
                 List<string> tags = new List<string>();
                 while (tagsReader.Read())

@@ -14,6 +14,8 @@ namespace auto_designs
     {
         private static readonly string keywordsPath = "keywords.json";
         private static readonly string dbPath = "tags.db";
+        private static readonly string newDesignPath = "D:\\printOnDemand\\new designs.txt";
+        private static readonly string newDesignfolderPath = "D:\\printOnDemand\\designs\\to upload";
         private static Dictionary<string, List<string>> keywordsData = new Dictionary<string, List<string>>();
 
         /// <summary>
@@ -121,6 +123,60 @@ namespace auto_designs
         public static Dictionary<string, List<string>> GetKeywordsData()
         {
             return keywordsData;
+        }
+
+        /// <summary>
+        /// this function creates the directory for a given path if it does not already exist
+        /// </summary>
+        /// <param name="path">the path</param>
+        private static void createFolderIfNotExists(string path)
+        {
+            Directory.CreateDirectory(path);
+        }
+
+        /// <summary>
+        /// this function creates a file at a given path if it does not already exist
+        /// </summary>
+        /// <param name="path">the path</param>
+        private static void createFileIfNotExists(string path)
+        {
+            if (!File.Exists(path))
+            {
+                File.Create(path);
+            }
+        }
+
+        public static void createNewDesignFiles()
+        {
+            List<string> newDesigns = readLinesFromFile(newDesignPath);
+
+            foreach (string design in newDesigns)
+            {
+                string name = design.Split(',')[0].Trim();
+                string niche = design.Split(',')[1].Trim();
+
+                createFolderIfNotExists(newDesignfolderPath + "\\" + name);
+                createFileIfNotExists(newDesignfolderPath + "\\" + name + "\\tags.txt");
+                createFileIfNotExists(newDesignfolderPath + "\\" + name + "\\title.txt");
+            }
+        }
+
+        public static List<string> readLinesFromFile(string filePath)
+        {
+            List<string> lines = new List<string>();
+
+            if (File.Exists(filePath))
+            {
+                lines = File.ReadAllLines(filePath).ToList();
+                File.WriteAllText(filePath, string.Empty);
+            }
+            else
+            {
+                Console.WriteLine($"File '{filePath}' does not exist.");
+                return new List<string>();
+            }
+
+            return lines;
         }
     }
 }
